@@ -124,6 +124,8 @@ class MathPythonEnv(EnvironmentSingleTurn):
     def sft_completion(self, example: TaskExample):
         metadata = example.metadata if isinstance(example.metadata, dict) else {}
         oracle = metadata.get("oracle_solution")
+        if not oracle and example.output is not None and "<think" in str(example.output).lower():
+            oracle = str(example.output)
         answer = _gold_answer(example)
         if oracle:
             content = str(oracle)
