@@ -73,12 +73,14 @@ def _math_correct(predicted: str | None, gold: str) -> tuple[bool, str | None]:
     candidates = _candidate_answers(predicted)
     if not candidates:
         return False, "missing_boxed_answer"
+    gold_text = str(gold).strip()
+    for candidate in candidates:
+        if candidate == gold_text:
+            return True, None
     try:
         with _VERIFY_LOCK:
             gold_parsed = parse(str(gold))
             for candidate in candidates:
-                if candidate == str(gold).strip():
-                    return True, None
                 if bool(verify(gold_parsed, parse(candidate))):
                     return True, None
         return False, None
